@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile - GR Token Cooldown Calculator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .token-input {
+        background-color: #f3f4f6; /* Tailwind gray-200 */
+      }
+      .token-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 1rem;
+      }
+      .token-day {
+        border: 2px solid #e5e7eb; /* Tailwind gray-300 */
+        padding: 0.5rem;
+      }
+      .token-label {
+        display: block;
+        text-align: center;
+        margin-bottom: 0.25rem;
+      }
+      .token-time {
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+      .day-heading {
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .week-heading {
+        font-weight: 600;
+        margin: 1rem 0;
+      }
+      @media (max-width: 640px) {
+        .token-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .border-mobile {
+          border: 2px solid black;
+        }
+      }
+    </style>
+    <script>
+      function updateThirdField(firstFieldId, thirdFieldId) {
+        const firstField = document.getElementById(firstFieldId);
+        const thirdField = document.getElementById(thirdFieldId);
+        if (firstField && thirdField) {
+          const timeValue = firstField.value.trim();
+          if (timeValue) {
+            const timeParts = timeValue.split(":");
+            if (timeParts.length === 2) {
+              let hours = parseInt(timeParts[0], 10);
+              let minutes = parseInt(timeParts[1], 10) - 15;
+              if (minutes < 0) {
+                minutes += 60;
+                hours -= 1;
+              }
+              if (hours < 0) {
+                hours += 24;
+              }
+              hours = hours.toString().padStart(2, "0");
+              minutes = minutes.toString().padStart(2, "0");
+              thirdField.value = `${hours}:${minutes}`;
+            }
+          } else {
+            thirdField.value = "";
+          }
+        }
+      }
+      function updatetimeMaxToken(Token28Id, seasonEndId) {
+        console.log("Function called!");
+        const Token28 = document.getElementById(Token28Id);
+        const seasonEnd = document.getElementById(seasonEndId);
+        const timeMaxToken = document.getElementById("timeMaxToken");
+
+        if (Token28 && seasonEnd && timeMaxToken) {
+          const Token28Value = Token28.value.trim();
+          const seasonEndValue = seasonEnd.value.trim();
+
+          if (Token28Value && seasonEndValue) {
+            const Token28Parts = Token28Value.split(":");
+            const seasonEndParts = seasonEndValue.split(":");
+
+            const Token28Hours = parseInt(Token28Parts[0], 10);
+            const Token28Minutes = parseInt(Token28Parts[1], 10);
+            const seasonEndHours = parseInt(seasonEndParts[0], 10);
+            const seasonEndMinutes = parseInt(seasonEndParts[1], 10);
+
+            let diffHours = seasonEndHours - Token28Hours;
+            let diffMinutes = seasonEndMinutes - Token28Minutes;
+
+            if (diffMinutes < 0) {
+              diffMinutes += 60;
+              diffHours -= 1;
+            }
+            if (diffHours < 0) {
+              diffHours += 24;
+            }
+
+            const negativeDiff = diffHours < 0 ? "-" : "";
+            if (diffHours < 10) {
+              diffHours = `0${Math.abs(diffHours)}`;
+            }
+            if (diffMinutes < 10) {
+              diffMinutes = `0${diffMinutes}`;
+            }
+
+            const formattedDiff = `${negativeDiff}${diffHours}:${diffMinutes}`;
+            timeMaxToken.value = formattedDiff;
+          } else {
+            timeMaxToken.value = "";
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="font-sans bg-white text-black">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold my-4">
+        Mobile - GR Token Cooldown Calculator
+      </h1>
+      <h1 class="text-sm font-medium my-4">
+        Welcome! This tool is made to show you, for how long you can hold on to
+        three token, before you would lose an attack throughout the season and
+        can no longer achieve 28 attacks. <br />Intro:<br />1.) fill in the time
+        of the seasons start in your timezone. <br />2.) fill in the time at
+        which you will get to three token into the "Third Token after season
+        start" field. If you are already mid-season, just fill in any time that
+        is after the season start and before the current time.
+      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label for="seasonStart" class="block text-sm font-medium mb-1"
+            >Season start in your timezone</label
+          >
+          <input
+            type="time"
+            id="seasonStart"
+            class="token-input rounded p-2 w-full"
+            onchange="updateThirdField('seasonStart', 'seasonEnd')"
+          />
+        </div>
+        <div>
+          <label for="thirdToken" class="block text-sm font-medium mb-1"
+            >Third Token after season start</label
+          >
+          <input
+            type="time"
+            id="thirdToken"
+            class="token-input rounded p-2 w-full"
+          />
+        </div>
+        <div>
+          <label for="seasonEnd" class="block text-sm font-medium mb-1"
+            >Season end in your timezone</label
+          >
+          <input
+            type="time"
+            id="seasonEnd"
+            class="token-input rounded p-2 w-full"
+            onchange="updatetimeMaxToken('Token28', 'seasonEnd')"
+            readonly
+          />
+        </div>
+        <div>
+          <label for="timeMaxToken" class="block text-sm font-medium mb-1"
+            >max. time holding on to 3 token</label
+          >
+          <input
+            type="time"
+            id="timeMaxToken"
+            class="token-input rounded p-2 w-full"
+            readonly
+          />
+        </div>
+      </div>
+      <!-- Week 1 -->
+      <h2 class="week-heading">Week 1 of GR season</h2>
+      <div class="token-grid">
+        <!-- Repeat this structure for each day of the week -->
+        <div class="token-day border-mobile">
+          <div class="day-heading">Wed.</div>
+          <label
+            for="Token3"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 3</label
+          >
+          <input
+            type="time"
+            id="Token3"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token4"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 4</label
+          >
+          <input
+            type="time"
+            id="Token4"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <!-- ... other days ... -->
+        <!-- Adding the rest of the days as per the feedback -->
+        <div class="token-day border-mobile">
+          <div class="day-heading">Thurs.</div>
+          <label
+            for="Token5"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 5</label
+          >
+          <input
+            type="time"
+            id="Token5"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token6"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 6</label
+          >
+          <input
+            type="time"
+            id="Token6"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Fri.</div>
+          <label
+            for="Token7"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 7</label
+          >
+          <input
+            type="time"
+            id="Token7"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token8"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 8</label
+          >
+          <input
+            type="time"
+            id="Token8"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Sat.</div>
+          <label
+            for="Token9"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 9</label
+          >
+          <input
+            type="time"
+            id="Token9"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token10"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 10</label
+          >
+          <input
+            type="time"
+            id="Token10"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Sun.</div>
+          <label
+            for="Token11"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 11</label
+          >
+          <input
+            type="time"
+            id="Token11"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token12"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 12</label
+          >
+          <input
+            type="time"
+            id="Token12"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Mon.</div>
+          <label
+            for="Token13"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 13</label
+          >
+          <input
+            type="time"
+            id="Token13"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token14"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 14</label
+          >
+          <input
+            type="time"
+            id="Token14"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Tues.</div>
+          <label
+            for="Token15"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 15</label
+          >
+          <input
+            type="time"
+            id="Token15"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="tuesdayToken16"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 16</label
+          >
+          <input
+            type="time"
+            id="Token16"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+      </div>
+      <!-- Week 2 -->
+      <h2 class="week-heading">Week 2 of GR season</h2>
+      <div class="token-grid">
+        <!-- Repeat this structure for each day of the week -->
+        <div class="token-day border-mobile">
+          <div class="day-heading">Wed.</div>
+          <label
+            for="Token17"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 17</label
+          >
+          <input
+            type="time"
+            id="Token17"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token18"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 18</label
+          >
+          <input
+            type="time"
+            id="Token18"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <!-- ... other days ... -->
+        <!-- Adding the rest of the days as per the feedback -->
+        <div class="token-day border-mobile">
+          <div class="day-heading">Thurs.</div>
+          <label
+            for="Token19"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 19</label
+          >
+          <input
+            type="time"
+            id="Token19"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token20"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 20</label
+          >
+          <input
+            type="time"
+            id="Token20"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Fri.</div>
+          <label
+            for="Token21"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 21</label
+          >
+          <input
+            type="time"
+            id="Token21"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token22"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 22</label
+          >
+          <input
+            type="time"
+            id="Token22"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Sat.</div>
+          <label
+            for="Token23"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 23</label
+          >
+          <input
+            type="time"
+            id="Token23"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token24"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 24</label
+          >
+          <input
+            type="time"
+            id="Token24"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Sun.</div>
+          <label
+            for="Token25"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 25</label
+          >
+          <input
+            type="time"
+            id="Token25"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token26"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 26</label
+          >
+          <input
+            type="time"
+            id="Token26"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+        <div class="token-day border-mobile">
+          <div class="day-heading">Mon.</div>
+          <label
+            for="Token27"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 27</label
+          >
+          <input
+            type="time"
+            id="Token27"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token28"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 28</label
+          >
+          <input
+            type="time"
+            id="Token28"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+            onchange="updatetimeMaxToken('Token28', 'seasonEnd')"
+          />
+        </div>
+        <div class="token-day border-mobile" style="background-color: #828282">
+          <div class="day-heading">Tues.</div>
+          <label
+            for="Token1"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 1</label
+          >
+          <input
+            type="time"
+            id="Token1"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+          <label
+            for="Token2"
+            class="token-label block text-xs font-medium mb-1 w-3/4"
+            >Token 2</label
+          >
+          <input
+            type="time"
+            id="Token2"
+            class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
+          />
+        </div>
+      </div>
+    </div>
+    <script>
+      function addHoursToTime(time, hours) {
+        const timeParts = time.split(":");
+        const date = new Date();
+        date.setHours(parseInt(timeParts[0], 10) + hours);
+        date.setMinutes(parseInt(timeParts[1], 10));
+        return date.toTimeString().substring(0, 5);
+      }
+
+      function updateTokenTimes(startIndex, baseTime, oddValue) {
+        let currentTime = baseTime;
+        for (let i = startIndex; i <= 28; i++) {
+          if (i !== 3) {
+            // Skip token 3 as per instructions
+            const tokenInput = document.getElementById("Token" + i);
+            if (tokenInput) {
+              tokenInput.value = i % 2 === 0 ? oddValue : currentTime;
+            }
+            currentTime = addHoursToTime(currentTime, 12);
+          }
+        }
+        // Wrap around for tokens 1 and 2 in the second week
+        document.getElementById("Token1").value = currentTime;
+        document.getElementById("Token2").value = addHoursToTime(
+          currentTime,
+          12
+        );
+      }
+
+      document.querySelectorAll(".token-input").forEach((input) => {
+        input.addEventListener("change", function () {
+          const tokenNumber = parseInt(this.id.replace("Token", ""), 10);
+          const baseTime = this.value;
+          const oddValue =
+            tokenNumber % 2 === 0 ? baseTime : addHoursToTime(baseTime, -12);
+          updateTokenTimes(
+            tokenNumber + 1,
+            addHoursToTime(baseTime, 12),
+            oddValue
+          );
+        });
+      });
+
+      document
+        .getElementById("thirdToken")
+        .addEventListener("change", function () {
+          const baseTime = this.value;
+          document.getElementById("Token3").value = baseTime;
+          updateTokenTimes(
+            4,
+            addHoursToTime(baseTime, 12),
+            addHoursToTime(baseTime, 12)
+          );
+        });
+      function checkTokenTime() {
+        const seasonEnd = document.getElementById("seasonEnd").value;
+        const token28 = document.getElementById("Token28").value;
+
+        if (seasonEnd && token28) {
+          const seasonEndMs = new Date(`2000-01-01T${seasonEnd}`).getTime();
+          const token28Ms = new Date(`2000-01-01T${token28}`).getTime();
+
+          if (token28Ms > seasonEndMs) {
+            document.getElementById("Token28").classList.add("text-red-500");
+          } else {
+            document.getElementById("Token28").classList.remove("text-red-500");
+          }
+        }
+      }
+      document
+        .getElementById("seasonEnd")
+        .addEventListener("change", function () {
+          checkTokenTime();
+        });
+
+      document
+        .getElementById("Token28")
+        .addEventListener("change", function () {
+          checkTokenTime();
+        });
+    </script>
+  </body>
+</html>
