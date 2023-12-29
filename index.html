@@ -51,29 +51,49 @@
           border: 2px solid black;
         }
       }
+      #toggleButton {
+    background-color: lightgrey;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    cursor: pointer;
+}
     </style>
 
   </head>
   <body class="font-sans bg-white text-black">
     <div class="container mx-auto px-4">
       <h1 class="text-2xl font-bold my-4"> GR Token Cooldown Calculator - by itsWolle</h1>
-      <h1 class="text-sm font-medium my-4">
-        Welcome! This tool is made to show you, for how long you can hold on to
-        three token, before you would lose an attack throughout the season and
-        can no longer achieve 28 attacks. 
-        <br />Intro:
-        <br />1.) fill in the time
-        of the seasons start in your timezone. 
-        <br />2.) fill in the time at
-        which you will get to three token into the "Third Token after season
-        start" field. If you are already mid-season, you could fill in the time at which you will have your next token.
-        <br>3.) now that the top section is filled out, there should be already a time displayed showing how long you could hold on to three tokens. If you change one of the times of Token 3 to Token 28, it updates the max. time holding on to three token as well.
-        <br>4.) if the time when you would get your 28th token of the season is later than the seasons end, the time you can hold on to three tokens is displayed in red as a negative, to show that you won't get to 28 tokens anymore
-        <br>
-        <br>
-        There are still some issues I am currently working on, so stay tuned. If you found this helpful I would highly appreciate you consider using my referral code ingame: <b>TOE-49-SAP</b>
-        <br>If you have any questions or feedback feel free to reach out on Discord: Username: <b>itswolle</b>
-      </h1>
+      <button id="toggleButton">Show/Hide Instructions</button>
+<div id="instructions" style="display: none;">
+    <h1 class="text-sm font-medium my-4">
+      Welcome! This tool is made to show you, for how long you can hold on to
+      three token, before you would lose an attack throughout the season and
+      can no longer achieve 28 attacks. 
+      <br />Intro:
+      <br />1.) fill in the time
+      of the seasons start in your timezone. 
+      <br />2.) fill in the time at
+      which you will get to three token into the "Third Token after season
+      start" field. If you are already mid-season, you could fill in the time at which you will have your next token.
+      <br>3.) now that the top section is filled out, there should be already a time displayed showing how long you could hold on to three tokens. If you change one of the times of Token 3 to Token 28, it updates the max. time holding on to three token as well.
+      <br>4.) if the time when you would get your 28th token of the season is later than the seasons end, the time you can hold on to three tokens is displayed in red as a negative, to show that you won't get to 28 tokens anymore
+      <br>
+      <br>
+      There are still some issues I am currently working on, so stay tuned. If you found this helpful I would highly appreciate you consider using my referral code ingame: <b>TOE-49-SAP</b>
+      <br>If you have any questions or feedback feel free to reach out on Discord: Username: <b>itswolle</b>
+    </h1>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#toggleButton").click(function(){
+                $("#instructions").toggle();
+            });
+        });
+    </script>
+</div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label for="seasonStart" class="block text-sm font-medium mb-1"
@@ -517,14 +537,12 @@
         const seasonEndValue = new Date(`2000-01-01T${seasonEndTime}`);
         if (token28Value > seasonEndValue) {
           token28.style.color = "red";
-          timeMaxToken.style.color = "red"; // Set color to red for mobile devices
         } else {
-          token28.style.color = ""; // Reset Token28 color if not larger
-          timeMaxToken.style.color = ""; // Reset timeMaxToken color
+          token28.style.color = ""; // Reset color if not larger
         }
       } else {
         timeMaxToken.value = `-${Math.abs(differenceHours).toString().padStart(2, "0")}:${Math.abs(differenceMinutes).toString().padStart(2, "0")}`;
-        timeMaxToken.style.color = "red"; // Set color to red for negative difference
+        timeMaxToken.style.color = "red";
       }
     } else {
       timeMaxToken.value = "";
