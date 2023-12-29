@@ -512,12 +512,14 @@
         const seasonEndValue = new Date(`2000-01-01T${seasonEndTime}`);
         if (token28Value > seasonEndValue) {
           token28.style.color = "red";
+          timeMaxToken.style.color = "red"; // Set color to red for mobile devices
         } else {
-          token28.style.color = ""; // Reset color if not larger
+          token28.style.color = ""; // Reset Token28 color if not larger
+          timeMaxToken.style.color = ""; // Reset timeMaxToken color
         }
       } else {
         timeMaxToken.value = `-${Math.abs(differenceHours).toString().padStart(2, "0")}:${Math.abs(differenceMinutes).toString().padStart(2, "0")}`;
-        timeMaxToken.style.color = "red";
+        timeMaxToken.style.color = "red"; // Set color to red for negative difference
       }
     } else {
       timeMaxToken.value = "";
