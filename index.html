@@ -52,79 +52,7 @@
         }
       }
     </style>
-    <script>
-      function updateThirdField(firstFieldId, thirdFieldId) {
-        const firstField = document.getElementById(firstFieldId);
-        const thirdField = document.getElementById(thirdFieldId);
-        if (firstField && thirdField) {
-          const timeValue = firstField.value.trim();
-          if (timeValue) {
-            const timeParts = timeValue.split(":");
-            if (timeParts.length === 2) {
-              let hours = parseInt(timeParts[0], 10);
-              let minutes = parseInt(timeParts[1], 10) - 15;
-              if (minutes < 0) {
-                minutes += 60;
-                hours -= 1;
-              }
-              if (hours < 0) {
-                hours += 24;
-              }
-              hours = hours.toString().padStart(2, "0");
-              minutes = minutes.toString().padStart(2, "0");
-              thirdField.value = `${hours}:${minutes}`;
-            }
-          } else {
-            thirdField.value = "";
-          }
-        }
-      }
-      function updatetimeMaxToken(Token28Id, seasonEndId) {
-        console.log("Function called!");
-        const Token28 = document.getElementById(Token28Id);
-        const seasonEnd = document.getElementById(seasonEndId);
-        const timeMaxToken = document.getElementById("timeMaxToken");
 
-        if (Token28 && seasonEnd && timeMaxToken) {
-          const Token28Value = Token28.value.trim();
-          const seasonEndValue = seasonEnd.value.trim();
-
-          if (Token28Value && seasonEndValue) {
-            const Token28Parts = Token28Value.split(":");
-            const seasonEndParts = seasonEndValue.split(":");
-
-            const Token28Hours = parseInt(Token28Parts[0], 10);
-            const Token28Minutes = parseInt(Token28Parts[1], 10);
-            const seasonEndHours = parseInt(seasonEndParts[0], 10);
-            const seasonEndMinutes = parseInt(seasonEndParts[1], 10);
-
-            let diffHours = seasonEndHours - Token28Hours;
-            let diffMinutes = seasonEndMinutes - Token28Minutes;
-
-            if (diffMinutes < 0) {
-              diffMinutes += 60;
-              diffHours -= 1;
-            }
-            if (diffHours < 0) {
-              diffHours += 24;
-            }
-
-            const negativeDiff = diffHours < 0 ? "-" : "";
-            if (diffHours < 10) {
-              diffHours = `0${Math.abs(diffHours)}`;
-            }
-            if (diffMinutes < 10) {
-              diffMinutes = `0${diffMinutes}`;
-            }
-
-            const formattedDiff = `${negativeDiff}${diffHours}:${diffMinutes}`;
-            timeMaxToken.value = formattedDiff;
-          } else {
-            timeMaxToken.value = "";
-          }
-        }
-      }
-    </script>
   </head>
   <body class="font-sans bg-white text-black">
     <div class="container mx-auto px-4">
@@ -150,7 +78,7 @@
             type="time"
             id="seasonStart"
             class="token-input rounded p-2 w-full"
-            onchange="updateThirdField('seasonStart', 'seasonEnd')"
+            onchange="updateseasonStart('seasonStart', 'seasonEnd')"
           />
         </div>
         <div>
@@ -164,9 +92,9 @@
           />
         </div>
         <div>
-          <label for="seasonEnd" class="block text-sm font-medium mb-1"
-            >Season end in your timezone</label
-          >
+          <label for="seasonEnd" class="block text-sm font-medium mb-1">
+            Season end in your timezone
+          </label>
           <input
             type="time"
             id="seasonEnd"
@@ -176,21 +104,21 @@
           />
         </div>
         <div>
-          <label for="timeMaxToken" class="block text-sm font-medium mb-1"
-            >max. time holding on to 3 token</label
-          >
+          <label for="timeMaxToken" class="block text-sm font-medium mb-1">
+            max. time holding on to 3 token
+          </label>
           <input
-            type="time"
+            type="text"
             id="timeMaxToken"
             class="token-input rounded p-2 w-full"
             readonly
+            pattern="(-)?(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9](\.[0-9]{1,3})?)?"
           />
         </div>
       </div>
       <!-- Week 1 -->
       <h2 class="week-heading">Week 1 of GR season</h2>
       <div class="token-grid">
-        <!-- Repeat this structure for each day of the week -->
         <div class="token-day border-mobile">
           <div class="day-heading">Wed.</div>
           <label
@@ -214,8 +142,6 @@
             class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
           />
         </div>
-        <!-- ... other days ... -->
-        <!-- Adding the rest of the days as per the feedback -->
         <div class="token-day border-mobile">
           <div class="day-heading">Thurs.</div>
           <label
@@ -358,7 +284,6 @@
       <!-- Week 2 -->
       <h2 class="week-heading">Week 2 of GR season</h2>
       <div class="token-grid">
-        <!-- Repeat this structure for each day of the week -->
         <div class="token-day border-mobile">
           <div class="day-heading">Wed.</div>
           <label
@@ -382,8 +307,6 @@
             class="token-input block text-xs font-medium mb-1 w-3/4 rounded p-2 w-full token-time"
           />
         </div>
-        <!-- ... other days ... -->
-        <!-- Adding the rest of the days as per the feedback -->
         <div class="token-day border-mobile">
           <div class="day-heading">Thurs.</div>
           <label
@@ -526,6 +449,86 @@
       </div>
     </div>
     <script>
+
+      // top section for Season Start and Season End -- this works
+      function updateseasonStart(firstFieldId, seasonStartId) {
+        const firstField = document.getElementById(firstFieldId);
+        const seasonStart = document.getElementById(seasonStartId);
+        if (firstField && seasonStart) {
+          const timeValue = firstField.value.trim();
+          if (timeValue) {
+            const timeParts = timeValue.split(":");
+            if (timeParts.length === 2) {
+              let hours = parseInt(timeParts[0], 10);
+              let minutes = parseInt(timeParts[1], 10) - 15;
+              if (minutes < 0) {
+                minutes += 60;
+                hours -= 1;
+              }
+              if (hours < 0) {
+                hours += 24;
+              }
+              hours = hours.toString().padStart(2, "0");
+              minutes = minutes.toString().padStart(2, "0");
+              seasonStart.value = `${hours}:${minutes}`;
+            }
+          } else {
+            seasonStart.value = "";
+          }
+        }
+      }
+      // top section for Season Start and Season End -- this works
+  
+  
+      //time max token calculation -- this works
+      function updatetimeMaxToken(token28Id, seasonEndId) {
+  const token28 = document.getElementById(token28Id);
+  const seasonEnd = document.getElementById(seasonEndId);
+  const timeMaxToken = document.getElementById("timeMaxToken");
+
+  if (token28 && seasonEnd && timeMaxToken) {
+    const token28Time = token28.value.trim();
+    const seasonEndTime = seasonEnd.value.trim();
+
+    if (token28Time && seasonEndTime) {
+      const [token28Hours, token28Minutes] = token28Time.split(":").map((part) => parseInt(part, 10));
+      const [seasonEndHours, seasonEndMinutes] = seasonEndTime.split(":").map((part) => parseInt(part, 10));
+
+      let differenceHours = seasonEndHours - token28Hours;
+      let differenceMinutes = seasonEndMinutes - token28Minutes;
+
+      if (differenceMinutes < 0) {
+        differenceHours--;
+        differenceMinutes += 60;
+      }
+
+      if (differenceHours >= 0) {
+        const maxTokenHours = differenceHours.toString().padStart(2, "0");
+        const maxTokenMinutes = differenceMinutes.toString().padStart(2, "0");
+        timeMaxToken.value = `${maxTokenHours}:${maxTokenMinutes}`;
+
+        // Check if Token28 is larger than seasonEnd and apply formatting
+        const token28Value = new Date(`2000-01-01T${token28Time}`);
+        const seasonEndValue = new Date(`2000-01-01T${seasonEndTime}`);
+        if (token28Value > seasonEndValue) {
+          token28.style.color = "red";
+        } else {
+          token28.style.color = ""; // Reset color if not larger
+        }
+      } else {
+        timeMaxToken.value = `-${Math.abs(differenceHours).toString().padStart(2, "0")}:${Math.abs(differenceMinutes).toString().padStart(2, "0")}`;
+        timeMaxToken.style.color = "red";
+      }
+    } else {
+      timeMaxToken.value = "";
+      timeMaxToken.style.color = ""; // Reset color for empty values
+    }
+  }
+}
+      //time max token calculation -- this works
+  
+      
+      //time updates based on thirdToken for all 28 Tokens -- this works
       function addHoursToTime(time, hours) {
         const timeParts = time.split(":");
         const date = new Date();
@@ -534,25 +537,28 @@
         return date.toTimeString().substring(0, 5);
       }
 
+      //time max token update automation -- this works
       function updateTokenTimes(startIndex, baseTime, oddValue) {
         let currentTime = baseTime;
-        for (let i = startIndex; i <= 28; i++) {
-          if (i !== 3) {
-            // Skip token 3 as per instructions
-            const tokenInput = document.getElementById("Token" + i);
-            if (tokenInput) {
-              tokenInput.value = i % 2 === 0 ? oddValue : currentTime;
+          for (let i = startIndex; i <= 28; i++) {
+            if (i !== 3) {
+              const tokenInput = document.getElementById("Token" + i);
+              if (tokenInput) {
+                tokenInput.value = i % 2 === 0 ? oddValue : currentTime;
+              }
+              currentTime = addHoursToTime(currentTime, 12);
             }
-            currentTime = addHoursToTime(currentTime, 12);
           }
-        }
-        // Wrap around for tokens 1 and 2 in the second week
-        document.getElementById("Token1").value = currentTime;
-        document.getElementById("Token2").value = addHoursToTime(
-          currentTime,
-          12
-        );
+          document.getElementById("Token1").value = currentTime;
+          document.getElementById("Token2").value = addHoursToTime(currentTime, 12);
+
+          // Automatically update timeMaxToken when Token28 is updated
+          const token28Value = document.getElementById("Token28").value;
+            if (token28Value) {
+              updatetimeMaxToken("Token28", "seasonEnd");
+            }
       }
+      //time max token update automation -- this works
 
       document.querySelectorAll(".token-input").forEach((input) => {
         input.addEventListener("change", function () {
@@ -579,32 +585,9 @@
             addHoursToTime(baseTime, 12)
           );
         });
-      function checkTokenTime() {
-        const seasonEnd = document.getElementById("seasonEnd").value;
-        const token28 = document.getElementById("Token28").value;
+      //time updates based on thirdToken for all 28 Tokens -- this works
 
-        if (seasonEnd && token28) {
-          const seasonEndMs = new Date(`2000-01-01T${seasonEnd}`).getTime();
-          const token28Ms = new Date(`2000-01-01T${token28}`).getTime();
-
-          if (token28Ms > seasonEndMs) {
-            document.getElementById("Token28").classList.add("text-red-500");
-          } else {
-            document.getElementById("Token28").classList.remove("text-red-500");
-          }
-        }
-      }
-      document
-        .getElementById("seasonEnd")
-        .addEventListener("change", function () {
-          checkTokenTime();
-        });
-
-      document
-        .getElementById("Token28")
-        .addEventListener("change", function () {
-          checkTokenTime();
-        });
+  
     </script>
   </body>
 </html>
